@@ -28,13 +28,15 @@ umd_fees_pct <- umd_fees |> mutate(pct_change = (`Fall 2024`- `Fall 2021`)/`Fall
 ```
 
 
+```{r}
+umd_fees_pct2425 <- umd_fees |> mutate(pct_change = (`Fall 2025`- `Fall 2024`)/`Fall 2024` * 100)
+```
+
 
 ### Task 4: Describe our results
 
 Write a few sentences about what you found in the data. What's the story here?
 
-
-
-
+Between 2024-2025, UMD total fees have increased by about 4.5%, while they have increased about 18.4% between 2021-2025. It could be interesting to see exactly where this funding is going, especially in that funding for student activities has increased by about 14.5% in a year. The most signficant increase in funding was for student sustainability, at 150% over 4 years. 
 
 When you are done, save your work, switch to GitHub Desktop, then add, commit and push your changes to GitHub and submit the URL of the notebook in ELMS.
