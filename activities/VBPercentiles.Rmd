@@ -37,6 +37,7 @@ team_aces |> mutate(percentile = ntile(total_aces, 100))
 
 Write a couple of sentences that puts Maryland into context with the other teams in the dataset. You can do some Internet research to help with this.
 
+Maryland is in the 95th percentile among other college volleyball teams in the number of aces their players completed. This mean their players were awarded 223 aces throughout the season, compared to UTEP, which scored 263 during the season. This measure may not be an accurate way to evaluate the team's success because Maryland volleyball team won 14 games and lost 17 during the 2024 season. 
 
 
 When you are done, save your work, switch to GitHub Desktop, then add, commit and push your changes to GitHub and submit the URL of the notebook in ELMS.
