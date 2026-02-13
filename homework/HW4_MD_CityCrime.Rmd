@@ -9,6 +9,8 @@ In this assignment, we will be working with a dataset of total crimes reported b
 You will need to load the tidyverse library and the janitor library
 
 ```{r}
+library(tidyverse)
+library(janitor)
 ```
 
 Then you'll load the data from the web. The URL for the data is: https://raw.githubusercontent.com/dwillis/jour405/refs/heads/main/data/md_cities_crime_2019_2020.csv. You will create a dataframe called `md_cities` that contains the data from this URL.
@@ -16,39 +18,50 @@ Then you'll load the data from the web. The URL for the data is: https://raw.git
 ### Task 2: Load the Data
 
 ```{r}
+md_crime <- read_csv("https://raw.githubusercontent.com/dwillis/jour405/refs/heads/main/data/md_cities_crime_2019_2020.csv") |> clean_names()
 ```
 ### Task 3: Calculating Rates
 
 Calculate violent and property crime rates for each city for both years using `mutate()`. You'll create four new columns: `violent_rate_2019`, `property_rate_2019`, `violent_rate_2020`, and `property_rate_2020`. You'll need to figure out the proper unit rate, given that there are varying populations. There's no perfect choice; choose the one that works best for you. Save the results to a new dataframe called `md_cities_rates`.
 
 ```{r}
+md_cities_rates <- md_crime |> mutate(violent_rate_2019 = (violent2019/pop2019) * 1000,
+                                      property_rate_2019 = (property2019/pop2019) * 1000,
+                                      violent_rate_2020 = (violent2020/pop2020) * 1000,
+                                      property_rate_2020 = (property2020/pop2020) * 100)
 ```
 
 ### Task 4: Describe the Rates
 
 Examine the new dataframe, `md_cities_rates`, by clicking on it in the Environment tab in RStudio and sorting by the rate columns. Write a couple of sentences about the results, comparing and contrasting the cities with the highest rates (both violent and property) in 2019 and 2020. Do you see any patterns? What does this tell you about crime in Maryland cities? What's the story here?
 
-ANSWER HERE
+The data showed that Baltimore was the city with the highest violent crime rate in 2019, which had about 18 incidents per 1,000 residents. Ocean City had the highest property crime rate in 2019 and 2020, with about 104 incidents per 1,000 residents in 2019 and 121 incidents per 1,000 residents in 2020. Ocean City also had the highest violent crime rate in 2020, at about 121 incidents per 1,000 residents.
 
+It makes sense that Baltimore had such a high crime rate because it is a very large city with many people. I do think it's interesting that both its violent and property crime rates decreased in 2020. I think the reason why Ocean City has such a large crime rate compared to their population is that there are many tourists who visit the city. Many of the crimes committed are likely by people who do not live there, however the crime rate is calculated with the cities resident population, which inflates the crime rate. Looking at the whole graph, I found it interesting that there was not a very clear trend in crime rates. While some cities' rates increased in 2020, others decreased. 
 
 ### Task 5: Calculate Percentage Change
 
 Let's add two percentage change columns to your dataframe: one for violent crime rates and one for property crime rates. You'll calculate the percentage change between 2019 and 2020 for each city. Save the results to a new dataframe called `md_cities_change`.
 
 ```{r}
+md_cities_change <- md_crime |> mutate(pct_change_violent = (violent2020- violent2019)/violent2019 * 100, 
+                                       pct_change_property = (property2020 - property2019)/property2019 * 100)
+
 ```
 
 ### Task 7: Describe Percentage Changes
 
 Look at the `md_cities_change` dataframe by clicking on it in the Environment tab in RStudio. Write a couple of sentences describing the percentage change results. What's more interesting here, the patterns or the outliers? What's the story in the data?
 
-ANSWER HERE
+While there is not a very clear crime trend, I think it is interesting that some cities had either extreme increases or decreases in crime rates. However, I think the most interesting information from the data is Baltimore City's decrease in violent crime because it went from having the highest violent crime rate in the state to dropping by about 15.3%. The city's property crime rate dropped by about 28%, which I think it very notable for such a populated city. 
 
 ### Task 8: Tell the Best Story
 
 Write up a lede and nutgraf of a story with the _best_ story idea you've found in this assignment. The lede should be a single sentence that summarizes the most important information in the data. The nutgraf should be a paragraph that provides more context and explains why the data is important.
 
-ANSWER HERE
+Baltimore City's violent crime rate dropped by about 15.3% in 2020, after the city saw the highest rate in the state the year prior.  
+
+Baltimore City, which is Maryland's most populated city, saw a significant drop in incidents of violent and property crime this past year. The city's property crime rate decreased by about 28%. 
 
 ### Task 9: Save Your Work and Put it on GitHub
 
