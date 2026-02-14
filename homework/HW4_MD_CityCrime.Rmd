@@ -66,3 +66,21 @@ Baltimore City, which is Maryland's most populated city, saw a significant drop 
 ### Task 9: Save Your Work and Put it on GitHub
 
 Save this notebook, then commit it to your local repository. Push the changes to your GitHub repository and submit the URL for this file in ELMS.
+
+### Task 10
+
+Your task will be to take the violent crime rates for 2020 and do three things:
+
+Using the 2020 violent crime rate, calculate the percentiles using `ntile()`. Save the results to a new dataframe called `md_cities_percentiles`. How many cities are above the 90th percentile?
+Calculate the Interquartile Range of the 2020 violent crime rate using `summarize()` and R's `IQR()` function. The syntax is similar to how `mean()` works.
+
+```{r}
+md_cities_percentiles <- md_cities_rates |>
+  mutate(violent_rate_2020_percentile = ntile(violent_rate_2020, 100))
+md_cities_rates |>
+  summarise(IQR_violent_2020 = IQR(violent_rate_2020))
+
+```
+Do the results change your best story idea from the previous assignment? Why or why not?
+I think the results do provide other ideas that could be good to pursue. I think it would be interesting to cover why Ocean City, which is in the 100th percentile for violent crime, has such high rates. Ocean City has a very high crime rate compared to its population. However, I do think it is still important to cover Baltimore City's high crime because it recorded the greatest number of total violent incidents in 2020. 
+
