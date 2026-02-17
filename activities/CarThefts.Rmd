@@ -46,6 +46,6 @@ car_thefts |>
 
 Is the distribution normal or skewed in one direction? Write a sentence in which you describe the range of the data covered by one standard deviation from the mean on both sides - how much of the data falls in that range?
 
-
+The distribution is slightly skewed in one direction. 95% of the data should fall between about 7 and 17 thefts per day, however about 20% falls outside of that range.
 
 When you are done, save your work, switch to GitHub Desktop, then add, commit and push your changes to GitHub and submit the URL of the notebook in ELMS.
