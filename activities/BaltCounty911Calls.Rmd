@@ -1,6 +1,6 @@
 ---
 title: "Baltimore County 911 Overdose Calls Analysis"
-author: "YOUR NAME HERE"
+author: "Mayah Nachman"
 ---
 
 ```{r setup, include=FALSE}
@@ -74,7 +74,7 @@ summary(daily_calls$call_count)
 
 Let's visualize the time series of daily calls. What patterns do you see? If you had to draw horizontal lines that would highlight unusual days, where would those lines be?
 
-ANSWER HERE
+I noticed that the number of drug overdose calls is lower at Jan. 2023 than it is at Jan. 2022. I also noticed that there is an uptick in calls in Oct. 2022 and a drop right before July 2022. I would draw lines to see the average number of calls per day and compare them with the outliers. 
 
 ```{r daily-calls-plot}
 # Plot daily call volume
@@ -89,7 +89,6 @@ ggplot(daily_calls, aes(x = date, y = call_count)) +
   scale_y_continuous(labels = comma) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
-
 
 
 
@@ -137,7 +136,7 @@ unusual_days |>
 
 Let's visualize these unusual days in the context of the full dataset. How do they differ from your answer on Task 3?
 
-ANSWER HERE
+This chart makes it much easier to see how many outliers there are in this data set. This allows me to better identify the number of unusually high or unusually low drug overdose calls received by Baltimore police. This also helps me compare the number of outliers per month and see how the time of year impacts the number of overdose calls. 
 
 ```{r plot-unusual-days}
 # Create a clean factor for the plot legend
@@ -207,7 +206,7 @@ ggplot(dow_summary, aes(x = day_of_week, y = avg_calls)) +
 
 We can also calculate z-scores that account for the day of the week pattern. How would you describe the day with the highest z-score without using the term "z-score"?
 
-ANSWER HERE
+Baltimore County Police received 23 drug overdose calls on Oct. 4, 2022, which is greater than the usual daily number. 
 
 ```{r day-of-week-z-scores}
 # Calculate day-of-week adjusted z-scores
@@ -298,5 +297,5 @@ top_outliers |> kable(digits = 2)
 
 Based on our z-score analysis, what are some potential angles for reporting? What would your next steps be and what would you tell an editor about your findings?
 
-ANSWER HERE
-
+I think the most important aspect of our analysis is that two of the days with the highest number of calls occurred within the same week of each other (July 14, 2022 and July 22, 2022). I think my next step would be to see if there were any bad batches of drugs that were laced with fentanyl. This would likely contribute to the high number of drug overdoses in such a short amount of time. 
+I also thought it was interesting that News Year's Day has one of the highest number of overdose calls. While this does make sense because people tend to party more on New Year's, I think it would be interesting to see how first reponders prepare for days where they are expecting high numbers of emergencies. 
