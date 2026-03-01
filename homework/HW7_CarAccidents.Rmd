@@ -27,19 +27,12 @@ library(knitr)      # For nice tables
 library(lubridate)  # For working with dates
 ```
 
-## Loading the Data
+### Task 1: Loading the Data (1 point)
 
-We'll load the accident data from our CSV file:
+Load the accident data from our CSV file at https://raw.githubusercontent.com/dwillis/jour405/refs/heads/main/data/daily_accidents.csv into a dataframe called `accidents`:
 
 ```{r load-data}
-# Load accident data
 accidents <- read_csv("https://raw.githubusercontent.com/dwillis/jour405/refs/heads/main/data/daily_accidents.csv")
-
-# Display the first few rows
-head(accidents)
-
-# Check basic info about the dataset
-glimpse(accidents)
 ```
 
 ## Data Exploration
@@ -72,10 +65,12 @@ ggplot(accidents, aes(x = date, y = total)) +
        caption = "Source: Prince George's County Accident Data")
 ```
 
-### Task 1 (3 points)
+### Task 2 (3 points)
 Looking at the time series visualization above, identify at least two noticeable patterns or anomalies. What questions would you want to investigate further based on this initial view of the data? How might these visual patterns translate into potential story angles?
 
-ANSWER HERE
+The first pattern that stood out to me was the drop in car accidents in 2020. This does make sense because people were directed to stay at home during the COVID-19 pandemic, which meant less people were driving. I think it could be interesting to examine if there are any other factors do the drop in accidents, or if it was primarily because less people were on the road. I also think it could be interesting to see if the number of accidents in 2020 were proportional to the average number of cars on the road, compared to other years. 
+
+Another pattern I noticed is that the number of car accidents was trending down at the end of 2024. I would first check if this trend continued into 2025 and 2026 to see if the topic is still relevant to examine. I would also see if there are any changes in how traffic violations are enforced in the county to see if there is a reason for the drop in accidents. 
 
 The daily data is quite noisy, so let's also look at weekly patterns:
 
@@ -111,14 +106,16 @@ ggplot(accidents, aes(x = day_of_week, y = total)) +
        caption = "Source: Prince George's County Accident Data")
 ```
 
-### Task 2 (2 points)
+### Task 3 (2 points)
 Based on the day-of-week analysis, which day(s) have the highest and lowest average accidents? Why might these patterns exist?
 
-ANSWER HERE
+The day of the week analysis shows that Fridays have the highest average number of accidents, with about 28 accidents. I think this could be because people are often rushing to leave work before the weekend and may drive unsafely. Additionally, people often have plans on Friday nights, which means more people are on the road in the dark. It looks like Mondays, Tuesdays and Wednesdays have the lowest average number of accidents, with about 24 accidents. This could be because people are often driving to work and are doing things that are part of their typical routine. Because of this, people may be more likely to drive in areas they are familiar with and are able to drive with less mistakes. 
 
 ## Calculating Z-Scores
 
-Now, let's calculate z-scores for our accident totals:
+### Task 4 (2 points)
+
+Now, using the accidents dataframe, add three columns using `mutate()`: mean_accidents, sd_accidents and z_score, based on the example from class.
 
 ```{r calculate-z-scores}
 # Calculate z-scores for total accidents
@@ -128,6 +125,7 @@ accidents <- accidents |>
     sd_accidents = sd(total),
     z_score = (total - mean_accidents) / sd_accidents
   )
+
 
 # Display the data with z-scores
 accidents |>
@@ -158,10 +156,10 @@ unusual_days |>
   kable(digits = 2)
 ```
 
-### Task 3 (3 points)
+### Task 5 (3 points)
 Choose one of the top 10 unusual days and research what might have happened on that date. Look for weather events, holidays, major incidents, or other factors that could explain the unusual number of accidents. Briefly describe your findings and how you would incorporate this context into a story.
 
-ANSWER HERE
+The date with the most usual number of car accidents was Oct. 29, 2021, with a z-score of 4.77. There were 58 accidents on this day. I found that there was a severe storm on this day, which definitely contributed to the number of car accidents. In a story about this, I would make sure to include information about the storm's conditions, such as how it caused severe flooding and strong winds. 
 
 Let's visualize these unusual days:
 
@@ -182,7 +180,9 @@ ggplot(accidents, aes(x = date, y = total, color = abs(z_score) > 2)) +
 
 ## Day of Week Patterns
 
-Let's calculate z-scores that account for day of week patterns:
+### Task 6 (3 points)
+
+Let's calculate z-scores that account for day of week patterns based on the same pattern as above:
 
 ```{r day-of-week-z-scores}
 # Calculate day-of-week adjusted z-scores
@@ -207,10 +207,10 @@ unusual_dow |>
   kable(digits = 2)
 ```
 
-### Task 4 (3 points)
+### Task 7 (3 points)
 Compare the days that have extreme z-scores overall versus those with extreme day-of-week z-scores. How do these lists differ? What journalistic insights can you draw from comparing these two different approaches to measuring "unusual" days?
 
-ANSWER HERE
+For this dataset, some of the day-of-week z-scores changed slightly because they took into account the number of accidents that typically occur on that day. For example, the Oct. 29, 2021 z-score went down slightly because there are typically more car accidents on Friday. While the number of accidents is abnormal, there are always more car accidents on Fridays, so it is not as much of an outlier for that day. The overall z-scores highlight outliers within the entire data set, while the day-of-week z-scores see if the data is abnormal for a certain day. Because of this, comparing the overall z-score can provide information about major events, like storms or holidays, while the day-of-week examines changes in weekly trends.  
 
 Let's see how many unusual days we have for each day of the week:
 
@@ -286,10 +286,10 @@ unusual_monthly |>
   kable(digits = 2)
 ```
 
-### Task 5 (2 points)
+### Task 8 (2 points)
 Based on the monthly pattern analysis, which months have the highest and lowest average accidents? Develop a hypothesis about why these seasonal patterns exist.
 
-ANSWER HERE
+January has the lowest average number of car accidents, while October has the highest average number of car accidents. This could be because in October, the weather is starting to become more rainy and cold, which can cause more accidents if drivers are not used to that weather. While Janruary is a very cold and icy month, the weather may deter people from driving, which could be why there are less accidents during the month. 
 
 ## Identifying Extreme Outliers
 
@@ -311,12 +311,17 @@ if(nrow(extreme_outliers) > 0) {
 }
 ```
 
-### Task 6 (2 points)
+### Task 9 (2 points)
 For the extreme outliers identified (z-scores beyond ±3), what do they have in common?
 
-ANSWER HERE
+I found that all of the days with extreme positive outliers had some sort of rainy weather. While some of the weather conditions were more severe, it looks like it likely would have contributed to the high number of car accidents. 
 
 ## Your Best Story Pitch
 
-### Task 7 (5 points)
+### Task 10 (5 points)
 Based on all the analyses performed, craft your best story pitch, including a headline and lede. Be sure to include what kinds of sources/people you'd talk to for the story.
+
+I would write a story about how the county has the greatest number of car accidents on days when it rains. I would include information about the higher number of accidents and what drivers should know about driving in the rain. For the story, I would talk to the police department and other first responders to see how they respond to and prepare for car accidents during weather events. I could also speak to someone who works with cars to discuss how to make sure a car is suited to drive in rainy weather. 
+
+Headline: Prince George's County sees spike in car accidents on rainy days
+Lede: Prince George's County drivers got into significantly more car accidents on days when it rained, county data shows. 
