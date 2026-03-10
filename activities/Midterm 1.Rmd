@@ -1,0 +1,183 @@
+---
+title: "Midterm 1"
+output: html_document
+---
+
+---
+title: "JOUR405: Statistics for Journalists"
+subtitle: "Midterm Exam"
+name: "Mayah Nachman"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+# JOUR405: Statistics for Journalists
+## Midterm Exam
+
+For this exam, you'll analyze several datasets using R and the statistical concepts we've covered in class. Load the tidyverse before beginning, then complete each task. Write your code in the provided blocks and answer the questions in complete sentences.
+
+## Load the tidyverse
+
+```{r}
+library(tidyverse)
+```
+
+---
+
+## Part 1: Restaurant Health Inspections (25 points)
+
+The first dataset contains restaurant health inspection scores from Montgomery County. Load the data from: `https://raw.githubusercontent.com/dwillis/jour405/refs/heads/main/data/montco_inspections.csv`
+
+The dataset includes the name of the establishment, the number of points for critical and non-critical areas, the total points, maximum points possible, the compliance score, and the grade.
+
+### Task 1: Read the data (2 points)
+
+```{r}
+compliance_stats <- read_csv("https://raw.githubusercontent.com/dwillis/jour405/refs/heads/main/data/montco_inspections.csv")
+```
+
+### Task 2: Calculate the mean, standard deviation, minimum, and maximum of compliance scores. Save the results in a new dataframe called `compliance_stats`. (2 points for each)
+
+```{r}
+compliance_stats |>
+  summarise( 
+  mean_compliance_score = mean(compliance_score),
+  median_compliance_score = median(compliance_score), 
+  min_compliance_score = min(compliance_score),
+  max_compliance_score = max(compliance_score),
+  sd_compliance_score = sd(compliance_score))
+```
+
+### Task 3: Create a histogram of the compliance scores with a vertical line showing the mean. Include a descriptive title and label the x and y axes using `labs()`. (10 points)
+
+```{r}
+
+compliance_stats |> 
+  ggplot() + 
+  geom_histogram(aes(x = compliance_score), binwidth = 5) +
+  geom_vline(aes(xintercept = mean(compliance_score)), color = "red", linetype = "dashed", size = 1) +
+  geom_vline(aes(xintercept = mean(compliance_score) - sd(compliance_score)), color = "blue", linetype = "dashed", size = 1) +
+  geom_vline(aes(xintercept = mean(compliance_score) + sd(compliance_score)), color = "blue", linetype = "dashed", size = 1)
+  labs(
+    title = "Montgomery County Health Inspection Compliance Scores",
+    x = "Compliance Score",
+    y = "Count"
+  ) +
+  theme_minimal()
+```
+
+### Task 4: Write 2–3 sentences interpreting what the standard deviation and histogram tell us about the distribution of compliance scores. What is newsworthy, and what would your next reporting step be? (5 points)
+
+This histogram is skewed to the left and the standard deviation is about 5.83, which tells us that most restaurants in Montgomery County receive favorable compliance scores during health inspections. While it is good that many restaurants receive high scores, I wonder what the health inspections standards. My next step would be to see what the inspections are like to see if the health department's standards are lower than exceptable. 
+
+## Part 2: Daily Transit Ridership — Z-Scores and Sampling (30 points)
+
+Your editor wants you to identify unusual days in WMATA's daily ridership data that might be worth investigating as story leads. The dataset contains daily bus and rail totals. Load the data from: `https://raw.githubusercontent.com/dwillis/jour405/refs/heads/main/data/wmata_daily.csv`
+
+### Task 5: Load the WMATA ridership data. (2 points)
+
+```{r}
+wmata_stats <- read_csv("https://raw.githubusercontent.com/dwillis/jour405/refs/heads/main/data/wmata_daily.csv")
+```
+
+### Task 6: Using `summarize()`, calculate the mean and standard deviation for both bus and rail ridership. Save the results in a dataframe called `wmata_stats`. (5 points)
+
+```{r}
+wmata_stats |>
+  summarise( 
+  mean_bus = mean(bus),
+  sd_bus = sd(bus), 
+  mean_rail = mean(rail),
+  sd_rail = sd(rail))
+```
+
+### Task 7: Using `mutate()`, add two new columns to `wmata_daily`: `rail_zscore` (the z-score for rail ridership) and `bus_zscore` (the z-score for bus ridership). Save the result as `wmata_zscores`. (8 points)
+
+```{r}
+
+wmata_zscores <- wmata_stats %>%
+  mutate(
+rail_zscore = (rail - mean(rail)) / sd(rail),
+bus_zscore  = (bus - mean(bus)) / sd(bus))
+```
+
+### Task 9: Using `set.seed()`, take a random sample of 91 days from `wmata_daily` (roughly 25% of the data). Calculate the mean and standard deviation for bus and rail ridership in the sample. How do the sample statistics compare to the population statistics you calculated in Task 6? Write 1–2 sentences comparing the values and explaining what this suggests about random sampling. (4 points)
+
+```{r}
+set.seed(42)
+
+sample_91 <- wmata_stats |> sample_n(91)
+
+sample_91 |> summarise(mean_rail91 = mean(rail), sd_rail91 = sd(rail))
+
+sample_91 |> summarise(mean_busl91 = mean(bus), sd_bus91 = sd(bus))
+
+```
+	347987.8	100164.3	331293.8	88486.88
+
+For the mean bus and rail ridership, the sample is shows a larger value than the actual number. The standard deviation for the sample rail ridership is larger than the actual value and is lower for the bus value. This shows that while random sampling can be a good indicator for different polls, it is important to consider what values are missing from the population. 
+
+### Task 10: Write 2–3 sentences: What do the unusual days in your z-score analysis suggest as story leads? (3 points)
+
+
+
+## Part 3: Maryland Car Theft Rates (25 points)
+
+Your editor has assigned you a story about car thefts in Maryland and wants you to find out which counties have the highest rates. The dataset contains car theft counts for Maryland counties in 2023 along with population figures. Load the data from: `https://raw.githubusercontent.com/dwillis/jour405/refs/heads/main/data/md_car_thefts.csv`
+
+### Task 11: Load the car thefts data. (2 points)
+
+```{r}
+md_car_thefts <- read_csv("https://raw.githubusercontent.com/dwillis/jour405/refs/heads/main/data/md_car_thefts.csv")
+```
+
+### Task 12: Using `mutate()`, add a column called `theft_rate` that calculates the car theft rate per 10,000 residents for each county. Save the result back to `md_car_thefts`. In 1–2 sentences, explain why a per-capita rate is more useful than raw counts for this comparison. (8 points)
+
+```{r}
+
+md_car_thefts |> mutate(theft_rate = thefts_2023/population * 10000)
+```
+
+Using a per-capita crime rate for this comparison is useful because it can help adjust for population size. Larger cities typically have more people, which makes it look like there is more crime, so it is important to take into account its population. 
+### Task 13: Calculate the median car theft rate and the total number of car thefts statewide. Show the counties that have rates above the median. (7 points)
+
+```{r}
+
+md_car_thefts |> mutate(median_theft_rate = median(thefts_2023))
+
+md_car_thefts |> mutate(mean_theft_rate = mean(thefts_2023))
+
+```
+
+### Task 14: Write 2–3 sentences describing what these calculations reveal about the distribution of car thefts in Maryland. What is the lede of a story based on your findings? (8 points)
+
+Most cities in Maryland are below the mean, however counties with larger populations bring up the crime rates significantly. 
+
+Lede: Maryland's larger counties have higher crime rates, considering their populations
+
+## Part 4: Data Analysis Scenario (20 points)
+
+A city parks department releases data showing that its 12 community swimming pools average 187 visitors per day during the summer season, with a standard deviation of 42 visitors. Your editor suspects that a handful of pools are dramatically under performing and wants a story. You also learn that the department's figures are based on a random sample of 60 days per pool rather than a complete count.
+
+Write 3–4 sentences for each of the following questions:
+
+### Question A: Given that the mean is 187 and standard deviation is 42, which statistical measures would you prioritize using and why? (7 points)
+
+I would prioritize the standard deviation when looking into the story because it is a large value, compared to the size of the mean. This likely means that there is a wider spread of data values, meaning the amount of visitors could vary throughout the summer season. Therefore, I would make sure to find the z-scores for different days throughout the summer to see what days the poor sees the most visitors. 
+
+### Question B: How would you use z-scores to identify which pools are genuinely underperforming, and why is that more useful than simply ranking pools by raw attendance? (7 points)
+
+I would use z-scores to identify which pools are under performing to see how consistently receiving less visitors. This is more useful than ranking pools by raw attendance because you can see what number of visitors is considered abnormal. If I saw that a day that had a very low number of visitors was given a low z-score, I would know that they are under performing because that is considered a typical value. 
+
+### Question C: The department collected its attendance figures using a random sample of 60 days per pool rather than tracking every day. What questions would you ask about the sample before relying on these figures for a story? What concerns would you raise in your story? Use statistical terminology where appropriate. (6 points)
+
+I would first ask if the sample was conducted during the summer time to make sure it applies to the article. Additionally, I would see if the pool was holding the same lessons they typically do during the summer. If the sample was taken at a time with less swimming programs, there would likely be less people vising the pool. For this story, I think it would be feasible to conduct the sample throughout the summer season because many pools require people to check in and likely have logs for how many visitors they had. 
+
+### Submission Instructions
+- Save your work frequently
+- Make sure all code blocks run without errors
+- Provide clear explanations for your choices
+
+Good luck!
