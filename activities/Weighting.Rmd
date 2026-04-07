@@ -245,4 +245,4 @@ The voter category with the biggest difference between the weighted and unweight
 This could make it more difficult to account for the political opinions of people who don't vote. If there is usually high voter turnout for this group, it could skew election results that may not have been reflected in polls. 
 
 3. Why do you think these differences exist? What does this tell us about who might be over or under-represented in the sample?
-This tells us that the responses of people who said they rarely/never vote are weighted more than other categories. In order to properly reflect the population, searchers may make these responses weigh more.  
+This tells us that the responses of people who said they rarely/never vote are weighted more than other categories. In order to properly reflect the population, searchers may make these responses weigh more. 
