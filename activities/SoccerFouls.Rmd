@@ -1,3 +1,4 @@
+
 ---
 title: "SoccerFouls"
 ---
@@ -48,6 +49,17 @@ matches |>
 
 
 ### Task 6: Describe the results of both the correlation calculation and the scatterplot.
+The correlation calculation is about 0.018, which means that there is no relationship between the number of times a soccer team commits a foul and the number of goals they score. The scatter plot supports this claim because the correlation line has a low slope. 
 
+### Task 7: Choose another variable and repeat the steps in Tasks 4-5 and then describe your result
+
+```{r}
+matches |> summarize(correlation = cor(assists, goal_diff, method="pearson"))
+matches |> 
+  ggplot() +
+  geom_point(aes(x=goal_diff, y=assists)) +
+  geom_smooth(aes(x=goal_diff, y=assists), method="lm")
+```
+It appears that the number of assists and the number of goals have a slightly positive correlation. The correlation value is about 0.4
 
 When you are done, save your work, switch to GitHub Desktop, then add, commit and push your changes to GitHub and submit the URL of the notebook in ELMS.
