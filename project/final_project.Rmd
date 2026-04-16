@@ -1,0 +1,17 @@
+---
+title: "final_project"
+output: html_document
+---
+
+### load the data 
+```{r}
+library(tidyverse)
+
+spotify <- read_csv("spotify-2023.csv")
+```
+
+The data set shows a list of the Spotify's 953 most famous songs throughout 2023. For my analysis, I want to see if a song's danceability has any effect on its popularity. The data includes several variables that could be used in my analysis, including the chart ranking and the number of beats per minute the song has. I am mainly going to use the dataset's danceability column and the playlist count column in my analysis. 
+
+Based on the feedback I received from the last assignment, I am planning to conduct a multiple regression analysis to see what other factors could impact a song's popularity (Spotify playlist count). 
+
+For the final project, how many different types of analysis should I conduct?
