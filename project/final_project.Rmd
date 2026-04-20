@@ -15,3 +15,12 @@ The data set shows a list of the Spotify's 953 most famous songs throughout 2023
 Based on the feedback I received from the last assignment, I am planning to conduct a multiple regression analysis to see what other factors could impact a song's popularity (Spotify playlist count). 
 
 For the final project, how many different types of analysis should I conduct?
+
+### Sunday, April 19 - Tests to Run 
+For this project I think I would start by making a scatterplot showing the relationship between the danceability and the playlist count. I would also add a trend line to the graph. This would help me see what type of relationship these two variables have. 
+
+I would also run a linear regression analysis between these two factors to find the p-value, which would help me see if danceability has a statistically significant effect on popularity. I would also like to see if the effect is meaningfully significant. 
+
+I am also planning to run a multiple regression using the beats per minute and the chart ranking to see if that also has an impact on popularity (playlist count). 
+
+While I think these tests will be helpful, I would like to confirm that these would be good to use in my analysis. 
