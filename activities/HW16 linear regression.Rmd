@@ -1,0 +1,106 @@
+
+---
+title: "Identifying Schools with Biggest Differences in Math Test Scores, Part 2"
+author: Mayah Nachman
+---
+
+```{r}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+options(scipen = 999)
+```
+
+### Introduction
+
+In the class activity, you tested a school board member's claim using data from Montgomery County, Pa. — and found a model that didn't hold up. Now you'll run the same analysis using data from Montgomery County, Md. Your job is to evaluate whether the Maryland data tells a different story, and what that means for how you'd report on the claim.
+
+### Loading the Data
+
+```{r}
+schools <- read_csv("https://raw.githubusercontent.com/dwillis/jour405_files/refs/heads/main/montgomery_md.csv")
+```
+
+### Task 1: Examine the Data First (2 points)
+
+Before you plot anything, look at the data — you know why by now.
+
+```{r}
+summary(schools$`FARMS Pct`)
+schools |> arrange(desc(`FARMS Pct`)) |> head(10)
+```
+
+Are there any data quality issues like the ones you found in the Pennsylvania data? How does the distribution of FARMS percentages compare between the two counties? Note anything that concerns you or gives you confidence in the data.
+
+I think this data set has a lot more variation in the percentage of student who are on FARMS, compared to the Pennsylvania data. While the highest percentage, which is 96% is high, I think it's a lot more realistic than 100% of the students qualifying for the program like they did in Pennsylvania. I think the fact that the FARMS percentage does vary so much gives me more confidence in the data.
+
+
+### Task 2: Create a Scatterplot and Compare (5 points)
+
+Replace the REPLACE_ME value with the correct variable name to create a scatterplot of FARMS percentage vs. math scores for Montgomery County, Md.
+
+```{r}
+schools |>
+  ggplot(aes(x = `FARMS Pct`, y = `% Met or Exceeded Math Expectations`)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  labs(x = "FARMS Percentage", y = "% Met or Exceeded Math Expectations",
+       title = "Math Scores vs. FARMS Percentage, Montgomery County MD")
+```
+
+Describe what you see. Then compare this scatterplot specifically to the Pennsylvania one: what differences do you notice in the direction, strength, and spread of the relationship? The two counties share a name and are both suburban — what might explain why they look so different?
+
+This scatterplot shows a pretty strong negative relationship between the percentage of students who qualify for FARMS and the percent who met or exceeded math expectations. Meaning that schools that have more students who qualify for FARMS typically have worse math scores. The Pennsylvania one did not have a very clear trend, with the data points scattered all around the plot. 
+
+The two plots could be very different because the school systems may have different math curriculums, which could make the data more inconsistent in Pennsylvania. In class, we also discussed that it is possible the Pennsylvania county adjusted the numbers, which could have caused inconsistencies. 
+
+### Task 3: Linear Regression Model (5 points)
+
+Replace the REPLACE_ME value with the correct variable name to run a linear regression model predicting math scores from FARMS percentage.
+
+```{r}
+model <- lm(`% Met or Exceeded Math Expectations` ~ `FARMS Pct`, data = schools)
+summary(model)
+```
+
+Report the three key statistics: the p-value, the Adjusted R-squared, and the coefficient for FARMS Pct. Then interpret them together — not separately. What does the combination of these three numbers tell you about the relationship between poverty and math scores in Montgomery County, Md.? Is this model worth using? How does it compare to the Pennsylvania model?
+
+The p-value is < 0.00000000000000022, the adjusted R-squared is 0.676 and the coefficient for FARMS percentage is -0.59511. The p-value is very small, which shows that the negative relationship between the FARMS percentage and the math scores is statistically significant. The coefficient tells us that for every percent increase in FARMS in schools, the percent of students meeting or exceeding math expectations drops by 0.595%. The adjusted R-squared value is generally pretty high, which supports the idea that some math scores are explained by FARMS percentage. 
+
+I do think this model is worth using because the data seems to be more realistic and is consistent with other studies showing that people with lower incomes tend to have a harder time doing better in school because they have less resources and have other challenges, besides school, to consider. Compared to the Pennsylvania model, this model has a much stronger relationship. 
+
+
+### Task 4: Identifying Schools with the Biggest Residuals (6 points)
+
+Replace the REPLACE_ME values with the correct variable names to calculate predicted values, residuals, and absolute residuals for each school. Then arrange the schools in descending order of absolute residuals.
+
+```{r}
+schools <- schools |>
+  mutate(
+    predicted = predict(model),
+    residual = `% Met or Exceeded Math Expectations` - predicted,
+    abs_residual = abs(residual)
+  ) |>
+  arrange(desc(abs_residual))
+
+head(schools |> select(1, `FARMS Pct`, `% Met or Exceeded Math Expectations`, predicted, residual), 10)
+```
+
+Identify the school with the largest positive residual (doing much better than the model predicts) and the school with the largest negative residual (doing much worse). For each school, find its zip code and look it up on [CensusReporter.org](https://censusreporter.org).
+
+For each of the two schools, answer:
+- What does the demographic and economic profile of the zip code look like?
+- Does anything in that profile help explain why the school is over- or under-performing the model?
+- What would your first reporting question be to the principal of that school?
+
+Fox Chapel Elementary has a positive residual of 29.99, while Germantown Elementary has a negative residual of 28.08%. According to census data about the area where Fox Chapel Elementary is, 9.8% of people live below the poverty line, with 21% of people below 18 living in poverty. However, 52% of the population has a bachelor's degree or higher. Because a pretty high number of college educated people live in this area, I could infer that the parents of some of the students at this school prioritize education, more than other expenses. Census data for the area where Germantown Elementary is shows that 8.3% of people live below the poverty line, with 11% of children living in poverty. 49% of the population has a bachelor's degree or higher, which is slightly lower. This could be an explanation of why this school is under performing. However, there are likely many other factors that are contributing to why the school is not doing as well as the model predicts. 
+
+I would ask the principal of the school how much support students receive if they are struggling with math, or if it's up to their parents to seek help. 
+
+### Task 5: Evaluate the Model and Write the Pitch (7 points)
+
+You've now run this analysis on two counties. Return to the school board member's claim: that elementary schools with fewer students on free and reduced-price meals do better on standardized math tests.
+
+Write a short story pitch of 4-6 sentences that addresses all of the following: Does the Maryland data support or contradict the claim? How does it compare to what you found in Pennsylvania? What would you ask the school board member if you called them for comment? And what's the most interesting specific finding from your residuals analysis: which school would you want to visit first, and why?
+
+
+The Maryland data does support the claim that schools with fewer students on free and reduced-price meals do better on standardized tests, but I would still do more reporting before I write a story about this. The Pennsylvania data was did not provide sufficient evidence to support the claim and the data looked like there was something off about it. I would be curious to ask the Pennsylvania school board member about the schools with students with 100% FARMS qualifiers. I do think it would be interesting to look into why Germantown Elementary is underperforming because typically schools in wealthier areas do better on math tests. 
