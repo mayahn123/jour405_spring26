@@ -23,4 +23,54 @@ I would also run a linear regression analysis between these two factors to find 
 
 I am also planning to run a multiple regression using the beats per minute and the chart ranking to see if that also has an impact on popularity (playlist count). 
 
-While I think these tests will be helpful, I would like to confirm that these would be good to use in my analysis. 
+While I think these tests will be helpful, I would like to confirm that these would be good to use in my analysis.
+
+### Monday, April 27 - 
+
+#load the tidyverse 
+```{r}
+library(tidyverse)
+```
+
+#Mean and standard deviation of playlist count  
+```{r}
+spotify |> summarize(mean = mean(in_spotify_playlists), sd = sd(in_spotify_playlists))
+```
+
+#Make a histogram of the playlist count 
+```{r}
+spotify |> 
+  ggplot() + 
+  geom_histogram(aes(x = in_spotify_playlists), binwidth = 1000)
+```
+
+#Add a line to the histogram for the mean and standard deviation playlist counts
+```{r}
+spotify|> 
+  ggplot() + 
+  geom_histogram(aes(x = in_spotify_playlists), binwidth = 1000) +
+  geom_vline(aes(xintercept = mean(in_spotify_playlists)), color = "red", linetype = "dashed", size = 1) +
+  geom_vline(aes(xintercept = mean(in_spotify_playlists) - sd(in_spotify_playlists)), color = "blue", linetype = "dashed", size = 1) +
+  geom_vline(aes(xintercept = mean(in_spotify_playlists) + sd(in_spotify_playlists)), color = "blue", linetype = "dashed", size = 1)
+```
+
+The histogram is rightly skewed, meaning that fewer Spotify songs are added to more than about 15,000 playlists. The histogram shows that songs in this data set are added to an average of about 5200 playlists total. 
+
+#Linear Regression 
+```{r}
+log(spotify$in_spotify_playlists)
+model <- lm(log(spotify$in_spotify_playlists) ~ spotify$`danceability_%`, data = spotify)
+summary(model)
+```
+
+ 
+```{r}
+spotify |>
+  ggplot(aes(x = `danceability_%`, y = log(in_spotify_playlists))) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  labs(x = "Danceability (%)", y = "Playlist Counts",
+       title = "Relationship Between Danceability Score and Playlist Count")
+```
+As the p-value is 0.0005, which is less than the significance value, the linear regression shows that there is a statistically significant relationship between a song's danceability score and the number of playlists it is added to. It looks like there is a slightly negative relationship between danceability and playlist count. However, the plots look like they are scattered around. 
+
