@@ -1,6 +1,6 @@
 ---
 title: "Multiple Regression Analysis: Maryland Voter Turnout"
-name: "YOUR NAME HERE"
+name: Mayah Nachman
 ---
 
 # Introduction
@@ -9,7 +9,7 @@ Multiple regression analysis is a statistical method used to understand the rela
 
 ```{r setup}
 library(tidyverse)
-#install.packages('corrplot')
+install.packages('corrplot')
 library(corrplot)
 ```
 
@@ -26,8 +26,7 @@ head(md_turnout)
 
 Before building our model, let's explore the data to understand the variables and their relationships. Examine the correlation matrix to see how the independent variables relate to each other and to the dependent variable (voter turnout). Which variables seem to be correlated? Are there any that are not correlated at all? Also look at the multiple scatterplots. Which variables seem to have a linear relationship with the dependent variable? Which do not?
 
-ANSWER HERE
-
+Based on the correlation matrix and the scatter plot, looks like unemployment and voter turnout are strongly negatively correlated and have a linear relationship. The correlation matrix shows that there isn't a very strong correlation between voter turnout and the other variables. Most of the data points on the plots, except for unemployment, are pretty scattered around so the correlation is not very strong. 
 
 ```{r}
 # Summary statistics
@@ -89,7 +88,12 @@ The coefficients tell us the estimated effect of each independent variable on th
 
 Examine the output of the model, checking the coefficients, residuals, and overall model fit. How well does this multiple variable model predict turnout? Do any of the variables seem to be insignificant? Is this a useful model, based on what you've seen? Why?
 
-ANSWER HERE
+The model's multiple R-squared is 0.8539, which means that 85% of the variability in voter turnout is explained by the model. This in combination with some of the other statistical measures for model fit, show that this multiple regression is generally useful to predict voter output. However, some of the variables aren't useful in predicting voter turnout. 
+
+The p-values for the income, white percentage and age show a statistically significant positive relationship with voter turnout. Unemployment percentage, bachelor's degree percentage and population does not show a statistically significant relationship. 
+
+The minimum residual of the model is -0.054 and the maximum is 0.024, with a median of 0.0005. This shows that most of the data points are close to zero, which means there isn't too much variance within the model. 
+
 
 ```{r}
 # Build initial model with all predictors
@@ -103,19 +107,19 @@ summary(initial_model)
 
 Create three alternative models by adding or removing variables to see if we can improve the model's performance. Turnout will always be the dependent variable, but you should alter the independent variables by removing or adding some. Then compare the models using adjusted R-squared values. Are any of the models significantly better than the others?
 
-ANSWER HERE
+For my three alternative models, I used income, median age and the percentage of white people. Model 1, which includes the three variables has an adjusted R-squared value of 0.80, which means it explains about 80% of the variability in voter turnout. The models that examine the variables separately have much lower adjusted R-squared values, with the next highest one being white percentage at 0.45. The other models only explain about 16.6% and 21.1% of the variance, which is pretty low. 
 
 ```{r}
 # Model 2
-model2 <- lm(turnout ~ REPLACE ME, data = md_turnout)
+model2 <- lm(turnout ~ income, data = md_turnout)
 summary(model2)
 
 # Model 3
-model3 <- lm(turnout ~ REPLACE ME, data = md_turnout)
+model3 <- lm(turnout ~ median_age, data = md_turnout)
 summary(model3)
 
 # Model 4
-model4 <- lm(turnout ~ REPLACE ME, data = md_turnout)
+model4 <- lm(turnout ~ pct_white, data = md_turnout)
 summary(model4)
 
 # Compare models
@@ -144,4 +148,4 @@ ggplot(model_comparison, aes(x = reorder(Model, Adjusted_R_squared), y = Adjuste
 
 Without using the words "multiple regression model", describe how you could use this analysis to cover an election or voter participation story.
 
-ANSWER HERE
+I would use this analysis to write about what groups are most likely to vote and what factors may deter people from voting. I would use the analysis in this model by comparing what factors have the biggest impact on voter turnout. I would also supplement my data analysis with my own reporting with other interviews and research. 
