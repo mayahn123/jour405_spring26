@@ -1,50 +1,32 @@
 ---
 title: "final_project"
-output: html_document
+by: Mayah Nachman 
 ---
 
-### load the data 
+### load the data
 ```{r}
 library(tidyverse)
-
+library(corrplot)
 spotify <- read_csv("spotify-2023.csv")
 ```
+This data set provides a list of Spotify's 953 most listened to songs throughout 2023. For my analysis, I will examine the effect a song's danceability has on the number of times it is added to a playlist using a linear regression analysis. I am using playlist count as a way to describe a song's popularity. 
 
-The data set shows a list of the Spotify's 953 most famous songs throughout 2023. For my analysis, I want to see if a song's danceability has any effect on its popularity. The data includes several variables that could be used in my analysis, including the chart ranking and the number of beats per minute the song has. I am mainly going to use the dataset's danceability column and the playlist count column in my analysis. 
+This data also includes several other variables that Spotify measures to asses different attributes of songs on the platform, including accurateness, instrumentalness and liveness. I will also use these variables to conduct a multiple regression analysis to compare their impact on playlist count. 
 
-Based on the feedback I received from the last assignment, I am planning to conduct a multiple regression analysis to see what other factors could impact a song's popularity (Spotify playlist count). 
+#Descriptive statistics 
+In this codeblock, I am going to examine the descriptive statistics for my dependent variable, which is the playlist count, and my main independent variable, which is the danceability percentage. Danceability is how Spotify measures how suitable a track is for dancing.
 
-For the final project, how many different types of analysis should I conduct?
-
-### Sunday, April 19 - Tests to Run 
-For this project I think I would start by making a scatterplot showing the relationship between the danceability and the playlist count. I would also add a trend line to the graph. This would help me see what type of relationship these two variables have. 
-
-I would also run a linear regression analysis between these two factors to find the p-value, which would help me see if danceability has a statistically significant effect on popularity. I would also like to see if the effect is meaningfully significant. 
-
-I am also planning to run a multiple regression using the beats per minute and the chart ranking to see if that also has an impact on popularity (playlist count). 
-
-While I think these tests will be helpful, I would like to confirm that these would be good to use in my analysis.
-
-### Monday, April 27 - 
-
-#load the tidyverse 
+#Summary of Spotify dataset 
 ```{r}
-library(tidyverse)
+summary(spotify)
 ```
+The Spotify playlist count shows that songs in this dataset were added to an average of about 5,200 playlists. The standard deviation of about 7,898 tells me that the playlist count varies greatly for each song, meaning that the data is spread out a lot. This also shows the distribution of playlist count, which is very strongly skewed to the right. The minimum playlist count in this dataset is 31, but the maximum is more than 52,000. This is likely because hit songs are added to significantly more playlists than other songs. 
 
-#Mean and standard deviation of playlist count  
-```{r}
-spotify |> summarize(mean = mean(in_spotify_playlists), sd = sd(in_spotify_playlists))
-```
+The independent variable I am using in my linear regression is danceability. The descriptive statistics show that the songs in this dataset have an average danceability percentage of about 67%, with a median of 69%. This shows that many of the songs have a pretty high danceability rating. 
 
-#Make a histogram of the playlist count 
-```{r}
-spotify |> 
-  ggplot() + 
-  geom_histogram(aes(x = in_spotify_playlists), binwidth = 1000)
-```
+I thought it was interesting that the instrumentalness percentage had a median of zero and a mean of about 1.6. This shows that most songs in the dataset had vocals. 
 
-#Add a line to the histogram for the mean and standard deviation playlist counts
+#Histogram with mean and standard deviation of playlist counts
 ```{r}
 spotify|> 
   ggplot() + 
@@ -54,7 +36,8 @@ spotify|>
   geom_vline(aes(xintercept = mean(in_spotify_playlists) + sd(in_spotify_playlists)), color = "blue", linetype = "dashed", size = 1)
 ```
 
-The histogram is rightly skewed, meaning that fewer Spotify songs are added to more than about 15,000 playlists. The histogram shows that songs in this data set are added to an average of about 5200 playlists total. 
+This histogram shows that the data is heavily skewed to the right, which means that hit songs bring up the average playlist count. Additionally, the histogram shows that the data is spread out, which means there is a lot variability in the number of times a song in this dataset was added to a playlist. 
+
 
 #Linear Regression 
 ```{r}
@@ -62,7 +45,7 @@ log(spotify$in_spotify_playlists)
 model <- lm(log(spotify$in_spotify_playlists) ~ spotify$`danceability_%`, data = spotify)
 summary(model)
 ```
-
+Because the data is heavily rightly skewed, I used a log transformation to limit the influence of hit songs on the linear regression. While this does limit the impact of outliers it does still include them without completely removing them from the dataset. 
  
 ```{r}
 spotify |>
@@ -72,5 +55,53 @@ spotify |>
   labs(x = "Danceability (%)", y = "Playlist Counts",
        title = "Relationship Between Danceability Score and Playlist Count")
 ```
-As the p-value is 0.0005, which is less than the significance value, the linear regression shows that there is a statistically significant relationship between a song's danceability score and the number of playlists it is added to. It looks like there is a slightly negative relationship between danceability and playlist count. However, the plots look like they are scattered around. 
+
+The linear regression coefficient between playlist count and danceability is about -0.01, which shows there is a slightly negative relationship between the two variables. The p-value of 0.0005 shows that this relationship is statistically significant. This means that songs with higher danceability scores were added to slightly fewer Spotify playlists. While the relationship is statistically significant, the data points are scattered throughout the plot, which shows that there is a lot of varability in the dataset. 
+
+However, the R-squared value of 0.013 shows that only 1.3% of the variation in playlist count is explained by danceability. This means other variables could have a more significant impact on playlist count. This is why I will conduct a multiple regression analysis to examine other factors that have an effect on playlist count. 
+
+#Multiple Regression Analysis 
+In this codeblock, I am going to concduct a multiple regression model to see what other measures have the most significant impact on  the playlist count. I used danceability, speechiness and acousticness in my multiple regression. Speechiness is an audio feature Spotify detects, which refers to the amount of spoken words versus sung words. Acousticness refers to how much of a song is played by acoustic instruments, rather than electronic music. 
+
+#Correlation Matrix 
+```{r}
+spotify_variables <- spotify |>
+  select(`valence_%`,`danceability_%`,`energy_%`,`acousticness_%`,`instrumentalness_%`,`liveness_%`, `speechiness_%`, `in_spotify_playlists`)
+
+corr_matrix <- cor(spotify_variables)
+
+corrplot(corr_matrix, method = "circle")
+```
+I made a correlation matrix to examine the relationships between the different audio features and the playlist count. I planned to use the correlation matrix because there is not a very strong relationship between danceability and playlist count, so I wanted to visualize the other relationships so I could get a better idea of what audio features to include in my multiple regression. While these relationships do not look very strong, I will use danceability, acousticness and speechiness in my multiple regression. This is because they have the largest circles in the playlist count column, which means they have stronger relationships than other audio features. 
+
+#Correlation matrix with danceability, acousticness and speechiness 
+Here's the correlation matrix with the narrowed down audio features. 
+```{r}
+spotify_vars <- spotify |>
+  select(`danceability_%`, `acousticness_%`,`speechiness_%`, `in_spotify_playlists`)
+
+corr_matrix <- cor(spotify_vars)
+
+corrplot(corr_matrix, method = "circle")
+```
+
+#Building the model 
+```{r}
+
+model <-lm(`in_spotify_playlists` ~ `danceability_%` + `acousticness_%` + `speechiness_%`, data = spotify)
+summary(model)
+```
+The estimates for each variable shows that for every point decrease in each audio feature, a song is found in fewer playlists. Danceability seems to have the greatest impact in this model, which predicts that for one percentage decrease a song would be in 62 fewer playlists. The p-value for each of the audio features are less than the signficant value of 0.05, so these negative relationships are all statistically significant. 
+
+However, the multiple R-squared value is 0.02464. This means that only 2.5% of the variation in Spotify playlist count is explained by the model. Therefore, while the relationships between the audio features and playlist count are significant, there are many of factors impacting playlist popularity that are not explained by this model. 
+
+#Main findings and limitations 
+My main finding is that external factors likely have more of an impact on playlist popularity, rather than a song's audio features. I came to this conclusion because only 2.5% of the variability in the playlist count is explained by the multiple regression model. However, I did also find that out of the audio features Spotify tracks, danceability does have the most impact on playlist count. 
+
+There are some limitations in my analysis. Firstly, playlist count is not the only way to assess a song's popularity. Using a combination of these factors would likely be a better way to determine how popular a song is. Another limitation is in the dataset I used. The dataset uses some of the most listened to songs in 2023, which may not accurately represent the different types of songs on Spotify's platform. 
+
+#Story pitch 
+While my analysis examined the impact of different audio factors on playlist count, I would like my story to look into the external variables that influence playlist count. I think it is notable that a song's audio features don't have very much of an impact on its popularity. Factors like the number of previously released song's by an artist or their popularity could have a more signficant impact on a song's playlist count. 
+
+My next steps would be to look into Spotify's music algorithm to see how they decide to promote different songs, which could impact a song's popularity. I would also like to collect more data that tells me more about an artist and their popularity. This could include the number of followers they have on social media or finding how many songs they already have on Spotify. 
 
